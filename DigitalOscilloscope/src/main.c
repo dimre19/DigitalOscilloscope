@@ -49,21 +49,22 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
+#if  !MODULE_TEST_ON
 int main(int argc, char* argv[])
 {
   // At this stage the system clock should have already been configured
   // at high speed.
 
-  Led_Init();
+	//TODO: manual test of SysTick in SysTick_TickStop()
 
-  // Infinite loop
-  while (1)
-  {
+	while (1)
+	{
 	 Led_Toggle();
 	 SysTick_DelayInMs(300);
-  }
+	}
 }
 
+#endif
 #pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------------

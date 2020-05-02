@@ -10,6 +10,15 @@
 
 #include "stm32f4xx.h"
 
+void SysTick_Enable();
+void SysTick_Disable();
+uint8_t SysTick_IsEnabled();
+uint32_t  SysTick_GetElapsedTimeSinceStartInMs();
+double  SysTick_GetElapsedTimeSinceStartInSec();
+void SysTick_TimerStart();
+uint32_t SysTick_TimerStop();
+void SysTick_TickStart();
+int32_t SysTick_TickStop();
 void SysTick_DelayInMs(uint32_t ms);
 
 #endif /* TIMING_H_ */
