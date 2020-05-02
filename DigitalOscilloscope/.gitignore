@@ -1,3 +1,6 @@
 /Release/
-/Debug/
-/.settings .project .cproject
+
+/Debug
+/.settings
+*.CPROJECT
+*.PROJECT
