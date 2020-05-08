@@ -32,6 +32,7 @@
 #include "diag/Trace.h"
 #include "Led.h"
 #include "Timing.h"
+#include "Spi.h"
 // ----------------------------------------------------------------------------
 // Trace support is enabled by adding the TRACE macro definition.
 // By default the trace messages are forwarded to the NONE output,
@@ -54,13 +55,18 @@ int main(int argc, char* argv[])
 {
   // At this stage the system clock should have already been configured
   // at high speed.
-
+	//uint32_t spiRxBuff;
 	//TODO: manual test of SysTick in SysTick_TickStop()
+	Led_Init();
+	Spi_Init();
 
 	while (1)
 	{
-	 Led_Toggle();
-	 SysTick_DelayInMs(300);
+		//SPI test
+//		Spi_WriteData();
+//		spiRxBuff = Spi_ReadData();
+		Led_Toggle();
+		SysTick_DelayInMs(300);
 	}
 }
 
