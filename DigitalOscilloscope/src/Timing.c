@@ -181,6 +181,7 @@ void SysTick_DelayInMs(uint32_t ms)
 {
 
 	#ifndef USE_HAL_DRIVER //TODO: check the dependency when _initialize_hardware() runs. This section shall be chosen in case of manual clock settings
+		//TODO: update content to calculate time only from reading Systick registers. DO NOT WRITE THEM! It brakes the other ongoing time measurements.
 		//Configure SysTick
 		SysTick->LOAD = 168000-1; //168Mz configuration TODO: update to clock dependent value
 		SysTick->VAL = 0;

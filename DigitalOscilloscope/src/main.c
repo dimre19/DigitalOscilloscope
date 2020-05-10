@@ -33,6 +33,7 @@
 #include "Led.h"
 #include "Timing.h"
 #include "Spi.h"
+#include "I2c.h"
 // ----------------------------------------------------------------------------
 // Trace support is enabled by adding the TRACE macro definition.
 // By default the trace messages are forwarded to the NONE output,
@@ -58,7 +59,8 @@ int main(int argc, char* argv[])
 	//uint32_t spiRxBuff;
 	//TODO: manual test of SysTick in SysTick_TickStop()
 	Led_Init();
-	Spi_Init();
+	I2c_Init();
+	I2c_SlaveTransmit();
 
 	while (1)
 	{
