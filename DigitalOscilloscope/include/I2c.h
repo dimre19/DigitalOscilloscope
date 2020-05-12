@@ -13,6 +13,6 @@
 uint8_t I2cMasterModeSelected;
 void I2c_Init();
 void I2c_MasterTransmit();
-void I2c_SlaveTransmit();
+void I2c_SlaveTransmit(uint8_t data);
 
 #endif /* I2C_H_ */

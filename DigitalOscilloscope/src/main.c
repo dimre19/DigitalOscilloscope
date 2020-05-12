@@ -34,6 +34,7 @@
 #include "Timing.h"
 #include "Spi.h"
 #include "I2c.h"
+#include "Adc.h"
 // ----------------------------------------------------------------------------
 // Trace support is enabled by adding the TRACE macro definition.
 // By default the trace messages are forwarded to the NONE output,
@@ -58,15 +59,21 @@ int main(int argc, char* argv[])
   // at high speed.
 	//uint32_t spiRxBuff;
 	//TODO: manual test of SysTick in SysTick_TickStop()
+	uint8_t tempSensorVal; //TODO: update to double --> how to handle in I2C communication?
+	double celsius;
 	Led_Init();
 	I2c_Init();
-	I2c_SlaveTransmit();
+	Adc_Init();
 
 	while (1)
 	{
 		//SPI test
 //		Spi_WriteData();
 //		spiRxBuff = Spi_ReadData();
+		celsius = Adc_Read(); //1sec period
+		tempSensorVal = (uint8_t)celsius;
+		//at start generation this function shall be already called.
+		I2c_SlaveTransmit(tempSensorVal); //period = elapsed time between two read request (from Raspberry Pi)
 		Led_Toggle();
 		SysTick_DelayInMs(300);
 	}

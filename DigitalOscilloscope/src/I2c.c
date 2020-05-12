@@ -63,14 +63,14 @@ void I2c_Init()
   * @param none
   * @retval none
   */
-void I2c_SlaveTransmit()
+void I2c_SlaveTransmit(uint8_t data) //TODO: update to RxBuff
 {
 	uint32_t tmp;
 
 	if(I2cMasterModeSelected)
 			return;
 
-	while(I2C3->SR2 & 2) {} //make sure bus is not busy
+	while(I2C3->SR2 & 2) {} //make sure bus is not busy  //TODO: busy condition should be a trigger instead of precheck
 
 	while(!(I2C3->SR1 & 2)) {}; //wait until address flag is set
 	//ack test
@@ -87,14 +87,14 @@ void I2c_SlaveTransmit()
 
 	//send data
 	while(!(I2C3->SR2 & 0x4)) {}; //Read request
-	I2C3->DR = 0xAA; //test data
+	I2C3->DR = data;//0xAA; //test data
 	while(!(I2C3->SR1 & 0x80)) {}; //wait until test data is sent
 
-	//TODO:remove while from acknowledge check
-	while(I2C3->SR1 & 0X400) {} //note: in HAL: sr1itflags & I2C_FLAG_RXNE) != RESET), Where 0x00010040U 16.bit is 1. Why??
-	//Generate stop condition
-		I2C3->CR1 |=0x200;
 
-	//only for test
-	while(I2C3->SR1 & 0X400) {}
+	//TODO:remove while from acknowledge check
+	//uncommented because Raspberry does not send acknowledge signal for some reason
+	//while(I2C3->SR1 & 0X400) {} //note: in HAL: sr1itflags & I2C_FLAG_RXNE) != RESET), Where 0x00010040U 16.bit is 1. Why??
+
+	//Generate stop condition
+	I2C3->CR1 |=0x200;
 }
