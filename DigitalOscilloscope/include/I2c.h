@@ -10,6 +10,9 @@
 
 #include "stm32f4xx.h"
 
+/******************MACROS****************/
+#define READ_INT_TEMP 0x40
+#define TEST_DATA 0x30
 uint8_t I2cMasterModeSelected;
 void I2c_Init();
 void I2c_MasterTransmit();

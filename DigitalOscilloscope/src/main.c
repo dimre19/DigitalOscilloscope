@@ -63,6 +63,7 @@ int main(int argc, char* argv[])
 	double celsius;
 	Led_Init();
 	I2c_Init();
+	TIM2_Init(); //for ADC Internal Temp Read
 	Adc_Init();
 
 	while (1)

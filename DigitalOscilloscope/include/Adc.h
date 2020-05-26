@@ -10,6 +10,7 @@
 
 #include "stm32f4xx.h"
 
+static double IntTemp = 0;
 void Adc_Init();
 double Adc_Read();
 

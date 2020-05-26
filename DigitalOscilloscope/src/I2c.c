@@ -65,7 +65,7 @@ void I2c_Init()
   */
 void I2c_SlaveTransmit(uint8_t data) //TODO: update to RxBuff
 {
-	uint32_t tmp;
+	uint32_t tmp, command;
 
 	if(I2cMasterModeSelected)
 			return;
@@ -85,9 +85,28 @@ void I2c_SlaveTransmit(uint8_t data) //TODO: update to RxBuff
 		//SysTick_DelayInMs(2);
 		tmp = I2C3->SR2; //clear ADDR bit (SR1 bit 1)
 
+	//check command
+	while(!(I2C3->SR1 & 0x40)) {}
+	command = I2C3->DR;
+
 	//send data
 	while(!(I2C3->SR2 & 0x4)) {}; //Read request
-	I2C3->DR = data;//0xAA; //test data
+
+	switch(command) {
+
+	case READ_INT_TEMP:
+		I2C3->DR = data; //send data
+		break;
+
+	case TEST_DATA:
+		I2C3->DR = 2;
+		break;
+
+	default:
+		I2C3->DR = 3;
+		break;
+	}
+
 	while(!(I2C3->SR1 & 0x80)) {}; //wait until test data is sent
 
 

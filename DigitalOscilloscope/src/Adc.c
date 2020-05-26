@@ -18,7 +18,7 @@ void Adc_Init()
 
 	#define TIM_TRIGGERED_SAMPLING 1
 
-	RCC->AHB1ENR |= 1; 	//Enable GPIOA clck (for PA1)
+	RCC->AHB1ENR |= 1; 	//Enable GPIOA CLK (for PA1)
 	RCC->APB2ENR |= 0x100; //Enable clock for ADC1
 	ADC1->CR2 = 0; 		//Disable ADC1. Note: Is '=' useful instead of &=~1? Note2: it was not part of this Udemy lession
 	ADC->CCR |= 0x00800000; //Enable Temperature sensor and VREFINT. Note. This is common ADC register!
@@ -38,6 +38,12 @@ void Adc_Init()
 
 }
 
+/**
+  * @brief ADC Read
+  * @note  Read Internal Temperature sensor value
+  * @param none
+  * @retval temperature value in °C
+  */
 double Adc_Read()
 {
 	uint32_t adcData;
@@ -47,6 +53,11 @@ double Adc_Read()
 	adcData = ADC1->DR;
 	voltage = (double)adcData/4095*2.966; //not 3V3: Discovery uses 3V for VDD (2.966V is measured)
 	celsius = (voltage - 0.76)/0.0025 + 25; //Reading the temperature section in complete ref manual
-
+	IntTemp = celsius;
 	return celsius;
+}
+
+double Adc_GetInternalTemp()
+{
+	return IntTemp;
 }
