@@ -22,7 +22,7 @@ msg = [0xAB]
 #bus.write_i2c_block_data(address, reg_write_dac, msg)
 for i in range(15):
     if i % 2:
-       tempValue = bus.read_i2c_block_data(address,0x40,1)
+       tempValue = bus.read_i2c_block_data(address,0x40,1) #TODO: read word (2 byte is fraction)
     else:
         tempValue = bus.read_i2c_block_data(address,0x30,1)
     
