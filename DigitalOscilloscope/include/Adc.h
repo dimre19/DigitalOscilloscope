@@ -13,5 +13,6 @@
 static double IntTemp = 0;
 void Adc_Init();
 double Adc_Read();
+double Adc_ReadIntTemp();
 
 #endif /* ADC_H_ */
