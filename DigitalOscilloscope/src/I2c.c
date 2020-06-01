@@ -47,7 +47,7 @@ void I2c_Init()
 	I2C3->CR2 = 42; //APB1 is 42MHz
 //	I2C3->CCR = 210; //100kHz Sm mode Don't care until I2C is in slave mode
 //	I2C3->TRISE = 43; //42+1, see ref man. Don't care until I2C is in slave mode
-	I2C3->OAR1 = 0x4000 | (0xFF << 1); //adress is 0x45 (random selected) on ADD[7:1] bits
+	I2C3->OAR1 = 0x4000 | (0xFF << 1); //adress is 0x45 (random selected) on ADD[7:1] bits. 0x4000 not needed (only STM32 HAL use this bit)
 
 	I2C3->CR1 |= 1; //enable I2C3
 	I2C3->CR1 |= 0x400; //Bit 10: ACK enable. This bit shall be set after enabling I2C3
@@ -108,7 +108,7 @@ void I2c_SlaveTransmit(uint8_t data) //TODO: update to RxBuff
 	}
 
 	while(!(I2C3->SR1 & 0x80)) {}; //wait until test data is sent
-
+	//TODO: send 2. byte (fraction). Do not forget to prepare Raspberry for it
 
 	//TODO:remove while from acknowledge check
 	//uncommented because Raspberry does not send acknowledge signal for some reason

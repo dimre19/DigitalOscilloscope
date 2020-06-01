@@ -59,8 +59,9 @@ int main(int argc, char* argv[])
   // at high speed.
 	//uint32_t spiRxBuff;
 	//TODO: manual test of SysTick in SysTick_TickStop()
-	uint8_t tempSensorVal; //TODO: update to double --> how to handle in I2C communication?
+	uint8_t tempSensorVal, adcResult; //TODO: update to double --> how to handle in I2C communication?
 	double celsius;
+	int i = 0;
 	Led_Init();
 	I2c_Init();
 	TIM2_Init(); //for ADC Internal Temp Read
@@ -71,12 +72,14 @@ int main(int argc, char* argv[])
 		//SPI test
 //		Spi_WriteData();
 //		spiRxBuff = Spi_ReadData();
-		celsius = Adc_Read(); //1sec period
-		tempSensorVal = (uint8_t)celsius;
+//		celsius = Adc_ReadIntTemp(); //1sec period
+//		tempSensorVal = (uint8_t)celsius;
 		//at start generation this function shall be already called.
-		I2c_SlaveTransmit(tempSensorVal); //period = elapsed time between two read request (from Raspberry Pi)
+		adcResult = Adc_Read()/16;
+		I2c_SlaveTransmit(adcResult); //period = elapsed time between two read request (from Raspberry Pi)
+
 		Led_Toggle();
-		SysTick_DelayInMs(300);
+		SysTick_DelayInMs(30);
 	}
 }
 
