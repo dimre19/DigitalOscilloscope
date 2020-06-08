@@ -1,51 +1,8 @@
-
-#
-#root.title("DigitalOscilloscope")
-#root.geometry('400x300')
-
-#root.mainloop()
-
-#import matplotlib, numpy, sys
-#matplotlib.use('TkAgg')
-#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-#from matplotlib.figure import Figure
-#if sys.version_info[0] < 3:
-#    import Tkinter as Tk
-#else:
-#    import tkinter as Tk
-#
-#root = Tk.Tk()
-#
-#f = Figure(figsize=(5,4), dpi=100)
-#ax = f.add_subplot(111)
-#
-#data = (20, 35, 30, 35, 27)
-#
-#ind = numpy.arange(5)  # the x locations for the groups
-#width = .5
-#
-#rects1 = ax.bar(ind, data, width)
-#
-#canvas = FigureCanvasTkAgg(f, master=root)
-#canvas.show()
-#canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
-#
-#Tk.mainloop()
-
-
-#import matplotlib.pyplot as plt
-#
-#plt.axis([0, 10, 0, 1])
-#
-#for i in range(10):
-#    y = i
-#    plt.scatter(i, y)
-#    plt.pause(1)
-#
-#plt.show()
 import random
+import time
 from itertools import count
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 from matplotlib.animation import FuncAnimation
 import matplotlib, sys
 matplotlib.use('TkAgg')
@@ -54,54 +11,64 @@ if sys.version_info[0] < 3:
     import Tkinter as Tk
 else:
     import tkinter as Tk
+import threading
 
+class WindowApp(threading.Thread):
 
-#f = plt.Figure(figsize = (9,5), dpi = 100)
-def on_closing(): #Question dialog box at exit
-    root.quit()     # stops mainloop
-    root.destroy()
-    #if messagebox.askokcancel("Quit", "Do you want to quit?"):
+    def __init__(self):
+        self.x_values = []
+        self.y_values = []
+        self.index = count()
         
+        threading.Thread.__init__(self)
+        self.start()
+
+    def callback(self):
+        self.root.quit()
+        self.root.destroy()
+        print("GUI closed")
+
+    def run(self):
+        self.root = Tk.Tk()
+        self.root.protocol("WM_DELETE_WINDOW", self.callback)
+
+#        label = tk.Label(self.root, text="Hello World")
+#        label.pack()
+        self.root.title("Digital Oscilloscope")
+        self.root.geometry('800x600')
+
+        plt.style.use('fivethirtyeight')
+
+            
+
+
+        f = plt.gcf()
+
+        canvas = FigureCanvasTkAgg(f, master=self.root)
+        canvas.draw()
+        #canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
+        canvas.get_tk_widget().place(relx = 0.5, rely = 0.48, relwidth = 1, relheight = 0.8, anchor = 'center' )
+
+        #
+        ani = FuncAnimation(f, self.animate, interval = 400)
+
+
+        #plt.tight_layout()
+        #plt.show() #(block = False)
+        f.canvas.draw()
+        self.root.mainloop()
         
-def animate(i):
-    
-    x_values.append(next(index))
-    y_values.append(random.randint(0, 5))
+    def animate(self,i):       
         
-    if i > 10:     
-        x_values.pop(0)
-        y_values.pop(0)
+        #self.add_y_val(random.randint(0, 5))
+        #TODO: replace with figure object and scale it's axis    
+        plt.cla()
+        plt.plot(self.x_values, self.y_values)
         
-        
-    plt.cla()
-    plt.plot(x_values, y_values)
-#    f.cla()
-#    f.plot(x_values, y_values)
-
-#ani = FuncAnimation(f, animate, interval = 1000)
-root = Tk.Tk()
-plt.style.use('fivethirtyeight')
-
-x_values = []
-y_values = []
-
-index = count()
-f = plt.gcf()
-
-canvas = FigureCanvasTkAgg(f, master=root)
-canvas.draw()
-#canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
-canvas.get_tk_widget().place(relx = 0.5, rely = 0.48, relwidth = 1, relheight = 0.8, anchor = 'center' )
-
-#
-ani = FuncAnimation(f, animate, interval = 1000)
-
-
-#plt.tight_layout()
-#plt.show() #(block = False)
-f.canvas.draw()
-root.protocol("WM_DELETE_WINDOW", on_closing)
-root.mainloop() #Tk.mainloop also works. any difference?
-#TODO: How to exit program?
-#plt.close()
-print('Done')
+    def add_y_val(self,y):
+        self.x_values.append(next(self.index)*0.5)
+        self.y_values.append(y)
+            
+        if len(self.x_values) > 40:     
+            self.x_values.pop(0)
+            self.y_values.pop(0)
