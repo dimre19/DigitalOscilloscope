@@ -201,3 +201,9 @@ void SysTick_DelayInMs(uint32_t ms)
 	#endif
 
 }
+
+// Simple imprecise delay method.
+void __attribute__( ( optimize( "O0" ) ) )
+delay_cycles( uint32_t cyc ) {
+  for ( uint32_t d_i = 0; d_i < cyc; ++d_i ) { asm( "NOP" ); }
+}

@@ -11,5 +11,6 @@
 #include "stm32f4xx.h"
 
 void TIM2_Init();
+void TIM6_Init();
 
 #endif /* TIMER_H_ */

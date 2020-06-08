@@ -35,6 +35,7 @@
 #include "Spi.h"
 #include "I2c.h"
 #include "Adc.h"
+#include "Dac.h"
 // ----------------------------------------------------------------------------
 // Trace support is enabled by adding the TRACE macro definition.
 // By default the trace messages are forwarded to the NONE output,
@@ -52,34 +53,28 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
+//const size_t SINE_SAMPLES = 32; //resolution of sine-wave
 #if  !MODULE_TEST_ON
 int main(int argc, char* argv[])
 {
-  // At this stage the system clock should have already been configured
-  // at high speed.
-	//uint32_t spiRxBuff;
-	//TODO: manual test of SysTick in SysTick_TickStop()
-	uint8_t tempSensorVal, adcResult; //TODO: update to double --> how to handle in I2C communication?
+	// At this stage the system clock should have already been configured
+	// at high speed.
+
+	uint16_t tempSensorVal, adcResult; //TODO: update to double --> how to handle in I2C communication?
 	double celsius;
-	int i = 0;
-	Led_Init();
-	I2c_Init();
+	uint16_t results[SINE_SAMPLES*5]; //oversampling by x5
+	uint32_t i = 0;
 	TIM2_Init(); //for ADC Internal Temp Read
+
+	Dac_Init();
+	TIM6_Init(); //shall be called after Dac_Init()!
 	Adc_Init();
 
-	while (1)
+	// Done; a low-res 440Hz sine wave should be playing on PA4.
+	while(1)
 	{
-		//SPI test
-//		Spi_WriteData();
-//		spiRxBuff = Spi_ReadData();
-//		celsius = Adc_ReadIntTemp(); //1sec period
-//		tempSensorVal = (uint8_t)celsius;
-		//at start generation this function shall be already called.
-		adcResult = Adc_Read()/16;
-		I2c_SlaveTransmit(adcResult); //period = elapsed time between two read request (from Raspberry Pi)
-
-		Led_Toggle();
-		SysTick_DelayInMs(30);
+	  adcResult = Adc_Read();
+	  results[i++ % (SINE_SAMPLES*5)] = adcResult;
 	}
 }
 
