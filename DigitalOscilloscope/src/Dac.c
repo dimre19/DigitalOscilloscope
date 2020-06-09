@@ -9,6 +9,7 @@
 // 32-sample sine wave.
 #define _AMP(x) ( x / 8 ) + 100
 const size_t SINE_SAMPLES = 32; //resolution of sine-wave
+
 const uint16_t SINE_WAVE[] = {
   _AMP(2048), _AMP(2447), _AMP(2831), _AMP(3185),
   _AMP(3495), _AMP(3750), _AMP(3939), _AMP(4056),
@@ -20,8 +21,15 @@ const uint16_t SINE_WAVE[] = {
   _AMP(601),  _AMP(911),  _AMP(1265), _AMP(1649)
 };
 
+/**
+  * @brief Initializing the digital-analog converter
+  * @note DMA is used
+  * @param none
+  * @retval none
+  */
 void Dac_Init()
 {
+	  //Clock enable for Port A (PA4 DAC output), DAC and DMA
 	  RCC->AHB1ENR  |= ( RCC_AHB1ENR_GPIOAEN |
 						 RCC_AHB1ENR_DMA1EN );
 	  RCC->APB1ENR  |= ( RCC_APB1ENR_DACEN |
@@ -44,13 +52,14 @@ void Dac_Init()
 							 DMA_SxCR_PSIZE |
 							 DMA_SxCR_PINC |
 							 DMA_SxCR_EN );
-	  DMA1_Stream5->CR |=  ( ( DMA_PRIORITY_HIGH/*0x2 << DMA_SxCR_PL_Pos*/ ) |
-							 ( DMA_MDATAALIGN_HALFWORD/*0x1 << DMA_SxCR_MSIZE_Pos */) |
-							 ( DMA_PDATAALIGN_HALFWORD/*0x1 << DMA_SxCR_PSIZE_Pos*/ ) |
-							 ( DMA_CHANNEL_7/*0x7 << DMA_SxCR_CHSEL_Pos*/ ) |
-							 DMA_MINC_ENABLE /*DMA_SxCR_MINC*/ |
-							 DMA_CIRCULAR/*DMA_SxCR_CIRC*/ |
-							 ( DMA_MEMORY_TO_PERIPH/*0x1 << DMA_SxCR_DIR_Pos*/ ) );
+	  DMA1_Stream5->CR |=  ( ( DMA_PRIORITY_HIGH) |
+							 ( DMA_MDATAALIGN_HALFWORD) |
+							 ( DMA_PDATAALIGN_HALFWORD ) |
+							 ( DMA_CHANNEL_7 ) |
+							 DMA_MINC_ENABLE  |
+							 DMA_CIRCULAR |
+							 ( DMA_MEMORY_TO_PERIPH ) );
+
 	  // Set DMA source and destination addresses.
 	  // Source: Address of the sine wave buffer in memory.
 	  DMA1_Stream5->M0AR  = ( uint32_t )&SINE_WAVE;
@@ -60,7 +69,6 @@ void Dac_Init()
 	  DMA1_Stream5->NDTR  = ( uint16_t )SINE_SAMPLES;
 	  // Enable DMA1 Stream 5.
 	  DMA1_Stream5->CR   |= ( DMA_SxCR_EN );
-
 
 
 	  // DAC configuration.

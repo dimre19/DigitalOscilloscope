@@ -7,6 +7,8 @@
 
 #include "Adc.h"
 
+
+double IntTemp = 0;
 /**
   * @brief ADC Init
   * @note  Timer triggered ADC1 internal temperature sensor processing
@@ -28,7 +30,7 @@ void Adc_Init()
 	//2. TIPP
 	ADC1->SMPR1 = 0x00100000; //Set greater sampling time than minimum temperature sensor Ts (10us, datasheet).
 							   //Pend bit 20 (84 sample). 84/ADCLK
-	//ADC1->SQR3 = 16; // Set channel 16 to first sequence
+	//ADC1->SQR3 = 16; // Set channel 16 to first sequence TODO: also read internal temp
 	ADC1->SQR3 = 1; // Set channel 16 to first sequence
 
 	GPIOA->MODER |= 0xC; 	//Set PA1 analog mode to ADC
@@ -41,12 +43,11 @@ void Adc_Init()
 }
 
 /**
-  * @brief ADC Read
-  * @note  Read Internal Temperature sensor value
+  * @brief Read ADC internap temperature
   * @param none
   * @retval temperature value in °C
   */
-double Adc_Read_Int_Temp()
+double Adc_Read_Int_Temp() //TODO: synchronize it with other ADC reads
 {
 	uint32_t adcData;
 	double voltage, celsius;
@@ -59,6 +60,11 @@ double Adc_Read_Int_Temp()
 	return celsius;
 }
 
+/**
+  * @brief Read ADC input value.
+  * @param none
+  * @retval none
+  */
 double Adc_Read()
 {
 	uint32_t adcData;
@@ -66,11 +72,17 @@ double Adc_Read()
 
 	while(!(ADC1->SR & 2)){}
 	adcData = ADC1->DR;
-	voltage = (double)adcData/4095*2.966; //not 3V3: Discovery uses 3V for VDD (2.966V is measured)
+	voltage = (double)adcData/4095*2.966; //Discovery uses 3V for VDD (2.966V is measured)
 
 	return adcData; //voltage; - until no friction handling in Raspberry Pi
 }
 
+/**
+  * @brief Get Internal Temperature
+  * @note This function only provides the last read temperature, but do not trigger a new read
+  * @param none
+  * @retval none
+  */
 double Adc_GetInternalTemp()
 {
 	return IntTemp;

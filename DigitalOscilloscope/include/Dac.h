@@ -10,8 +10,7 @@
 
 #include "stm32f4xx.h"
 
-
-
 const size_t SINE_SAMPLES;
+
 void Dac_Init();
 #endif /* DAC_H_ */

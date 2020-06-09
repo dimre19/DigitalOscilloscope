@@ -20,5 +20,5 @@ uint32_t SysTick_TimerStop();
 void SysTick_TickStart();
 int32_t SysTick_TickStop();
 void SysTick_DelayInMs(uint32_t ms);
-void delay_cycles(uint32_t cyc);
+void __attribute__( ( optimize( "O0" ) ) ) delay_cycles(uint32_t cyc);
 #endif /* TIMING_H_ */
