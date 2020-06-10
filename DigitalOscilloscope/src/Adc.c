@@ -87,7 +87,7 @@ double Adc_ReadIntTemp() //TODO: synchronize it with other ADC reads
   */
 uint16_t Adc_Read()
 {
-	uint32_t adcData;
+	uint16_t adcData;
 	double voltage;
 
 	//while(!(ADC2->SR & 2)){}

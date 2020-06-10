@@ -40,8 +40,8 @@ void TIM5_Init()
 
 	// Set up PWM. PWM is used to have one rising edge in each cycle (trigger)
 	// Other option is simple CC and set ADC to be sensitive both falling and rising edges. Many options. :)
-	TIM5->PSC  =  8400-1; //prescale to 10kHz
-	TIM5->ARR  =  5000-1; //2kHz signal
+	TIM5->PSC  =  0x0000;
+	TIM5->ARR  =  SystemCoreClock / ( 440 * 32 ); //syncronize with DAC frequency
 	TIM5->CNT = 0;
 	TIM5->CCMR1 = 0x6800; //PWM mode
 	TIM5->CCER = 0x0010; //enable output compare 2 preload

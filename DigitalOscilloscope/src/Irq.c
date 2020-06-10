@@ -9,6 +9,8 @@
 #include "Adc.h"
 #include "Global.h"
 
+uint32_t i = 0;
+uint32_t j = 0;
 /**
   * @brief Interrupt handler of ADCs
   * @param none
@@ -20,10 +22,12 @@ void ADC_IRQHandler()
 	{
 		EventFlag |= 0x01;
 		ADC1->SR &=~ 0x2;
+		i++;
 	}
 	if(ADC2->SR & 0x2)
 	{
 		EventFlag |= 0x02;
 		ADC2->SR &=~ 0x2;
+		j++;
 	}
 }

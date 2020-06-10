@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
 
 	TIM2_Init(); //for ADC internal temp read
 	TIM5_Init(); //for ADC input signal measurement
+	Dac_Init(); //sine wave for test
+	TIM6_Init(); //shall be called after Dac_Init()?
 	Adc_Init();
 	Led_Init();
 
@@ -67,6 +69,9 @@ int main(int argc, char* argv[])
 	  {
 		  celsius = Adc_ReadIntTemp();
 		  tempSensorMeas[tempSensorIndex++ % (32)] = celsius;
+
+		  Led_Toggle();
+
 		  EventFlag &=~ 0x1;
 	  }
 	  if(EventFlag & 0x2) //ADC new input measurement event (ADC2)
@@ -76,8 +81,8 @@ int main(int argc, char* argv[])
 		  EventFlag &=~ 0x2;
 	  }
 
-	  Led_Toggle();
-	  SysTick_DelayInMs(500);
+
+
 	}
 }
 
