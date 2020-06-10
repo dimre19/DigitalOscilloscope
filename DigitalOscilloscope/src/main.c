@@ -63,21 +63,21 @@ int main(int argc, char* argv[])
 	HAL_NVIC_EnableIRQ(ADC_IRQn);
 
 
-	while(1)
+	while(1) //TODO: update to function pointer scheduling in order to call the handlers in the priority of interrupts
 	{
 	  if(EventFlag & 0x1) //ADC new internal temperature event (ADC1)
 	  {
 		  celsius = Adc_ReadIntTemp();
 		  tempSensorMeas[tempSensorIndex++ % (32)] = celsius;
-
-		  Led_Toggle();
-
+		  Led_Toggle(BLUE_LED); //LED indicator of ADC1 sampling in sec
 		  EventFlag &=~ 0x1;
 	  }
 	  if(EventFlag & 0x2) //ADC new input measurement event (ADC2)
 	  {
 		  adcResult = Adc_Read();
 		  adcInputMeas[adcInputIndex++ % (32*5)] = adcResult;
+		  if(!(adcInputIndex % 1000)) //TODO: analyze how much processor time is this if condition check
+			  Led_Toggle(RED_LED); //LED indicator of ADC2 sampling in ms
 		  EventFlag &=~ 0x2;
 	  }
 
