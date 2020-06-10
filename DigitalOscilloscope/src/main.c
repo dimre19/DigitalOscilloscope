@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "diag/Trace.h"
+#include "Global.h"
 #include "Led.h"
 #include "Timing.h"
 #include "Timer.h"
@@ -35,19 +36,48 @@ int main(int argc, char* argv[])
 
 	uint16_t tempSensorVal, adcResult; //TODO: update to double --> how to handle in I2C communication?
 	double celsius;
-	uint16_t results[SINE_SAMPLES*5]; //oversampling by x5
-	uint32_t i = 0;
-	TIM2_Init(); //for ADC Internal Temp Read
+	double tempSensorMeas[32];
+	uint16_t adcInputMeas[32*5];
+	uint32_t tempSensorIndex= 0;
+	uint32_t adcInputIndex = 0;
 
-	Dac_Init();
-	TIM6_Init(); //shall be called after Dac_Init()?
+	for(int i = 0; i<32; i++)
+	{
+		tempSensorMeas[i] = 0;
+	}
+	for(int i = 0; i<32*5; i++)
+	{
+		adcInputMeas[i] = 0;
+	}
+
+	TIM2_Init(); //for ADC internal temp read
+	TIM5_Init(); //for ADC input signal measurement
 	Adc_Init();
+	Led_Init();
 
-	// Done; a low-res 440Hz sine wave should be playing on PA4.
+	EventFlag = 0; //clear events
+
+	HAL_NVIC_SetPriority(ADC_IRQn, 0, 0); //TODO: update priority
+	HAL_NVIC_EnableIRQ(ADC_IRQn);
+
+
 	while(1)
 	{
-	  adcResult = Adc_Read();
-	  results[i++ % (SINE_SAMPLES*5)] = adcResult;
+	  if(EventFlag & 0x1) //ADC new internal temperature event (ADC1)
+	  {
+		  celsius = Adc_ReadIntTemp();
+		  tempSensorMeas[tempSensorIndex++ % (32)] = celsius;
+		  EventFlag &=~ 0x1;
+	  }
+	  if(EventFlag & 0x2) //ADC new input measurement event (ADC2)
+	  {
+		  adcResult = Adc_Read();
+		  adcInputMeas[adcInputIndex++ % (32*5)] = adcResult;
+		  EventFlag &=~ 0x2;
+	  }
+
+	  Led_Toggle();
+	  SysTick_DelayInMs(500);
 	}
 }
 

@@ -12,7 +12,7 @@
 
 
 void Adc_Init();
-double Adc_Read();
+uint16_t Adc_Read();
 double Adc_ReadIntTemp();
 
 #endif /* ADC_H_ */
