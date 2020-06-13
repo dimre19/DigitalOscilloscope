@@ -80,4 +80,22 @@ void ModuleTest_SysTickFunctions()
 	 elapsedTime[6] = SysTick_GetElapsedTimeSinceStartInMs();
 	}
 }
+
+void ModuleTest_Usart2()
+{
+	uint32_t txBuffer = 65;//'*';
+		uint32_t rxBuffer = 2;
+		USART2_Init();
+		Led_Init();
+		HAL_NVIC_SetPriority(USART2_IRQn, 0, 0); //TODO: update priority
+		HAL_NVIC_EnableIRQ(USART2_IRQn);
+
+		while(1)
+		{
+			//USART2_Send(txBuffer++);
+	//		rxBuffer = USART2_Receive(); //comment out if IRQ is applied
+			SysTick_DelayInMs(1000);
+			Led_Toggle(BLUE_LED);
+		}
+}
 #endif

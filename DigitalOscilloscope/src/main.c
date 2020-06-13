@@ -17,6 +17,7 @@
 #include "Timer.h"
 #include "Spi.h"
 #include "I2c.h"
+#include "Usart.h"
 #include "Adc.h"
 #include "Dac.h"
 
@@ -40,6 +41,8 @@ int main(int argc, char* argv[])
 	uint16_t adcInputMeas[32*5];
 	uint32_t tempSensorIndex= 0;
 	uint32_t adcInputIndex = 0;
+	uint8_t usartTxIndex = 0;
+	uint8_t rxBuffer[32];
 
 	for(int i = 0; i<32; i++)
 	{
@@ -56,11 +59,14 @@ int main(int argc, char* argv[])
 	TIM6_Init(); //shall be called after Dac_Init()?
 	Adc_Init();
 	Led_Init();
+	USART2_Init();
 
 	EventFlag = 0; //clear events
 
-	HAL_NVIC_SetPriority(ADC_IRQn, 0, 0); //TODO: update priority
+	HAL_NVIC_SetPriority(ADC_IRQn, 0, 1); //TODO: update priority
+	HAL_NVIC_SetPriority(USART2_IRQn, 0, 0); //TODO: update priority
 	HAL_NVIC_EnableIRQ(ADC_IRQn);
+	HAL_NVIC_EnableIRQ(USART2_IRQn);
 
 
 	while(1) //TODO: update to function pointer scheduling in order to call the handlers in the priority of interrupts
@@ -80,10 +86,21 @@ int main(int argc, char* argv[])
 			  Led_Toggle(RED_LED); //LED indicator of ADC2 sampling in ms
 		  EventFlag &=~ 0x2;
 	  }
-
-
+	  if(EventFlag & 0x04) //USART2 Rx
+	  {
+		  USART2_ReadRxBuffer(rxBuffer);
+		  while(rxBuffer[usartTxIndex] != 13 && usartTxIndex != 32) //Carriage return
+		  {
+			  USART2_Send(rxBuffer[usartTxIndex++]);
+		  }
+		  USART2_Send(10);//new line
+		  USART2_Send(13);//carriage return
+		  usartTxIndex = 0;
+		  EventFlag &=~ 0x04;
+	  }
 
 	}
+
 }
 
 #endif
