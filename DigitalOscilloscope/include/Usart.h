@@ -14,8 +14,9 @@ void USART2_Init(void);
 void USART2_Init(void);
 uint32_t USART2_Receive(void);
 void USART2_Send(uint32_t txBuffer);
-void USART2_UpdateTxBuffer();
+void USART2_UpdateRxBuffer(uint8_t newData);
 void USART2_ReadRxBuffer(uint8_t* rxBuff);
+
 
 
 

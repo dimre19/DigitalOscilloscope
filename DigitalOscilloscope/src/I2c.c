@@ -7,7 +7,6 @@
 
 
 #include "I2C.h"
-#include "stm32f4xx.h"
 
 
 /**

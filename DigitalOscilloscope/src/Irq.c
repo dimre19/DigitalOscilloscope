@@ -9,9 +9,10 @@
 #include "Adc.h"
 #include "Global.h"
 #include "Usart.h"
+#include "Led.h"
+#include "Timing.h"
 
-uint32_t i = 0;
-uint32_t j = 0;
+#define SWITCH_BOUNCE_THRESHOLD_MS 800 //TODO: reduce this value once user button is applied instead of connecting a wire
 /**
   * @brief Interrupt handler of ADCs
   * @param none
@@ -23,13 +24,11 @@ void ADC_IRQHandler() //TODO: worth to switch to non irq mode in case of high sa
 	{
 		EventFlag |= 0x01;
 		ADC1->SR &=~ 0x2; //data read only in main
-		i++;
 	}
 	if(ADC2->SR & 0x2)
 	{
 		EventFlag |= 0x02;
 		ADC2->SR &=~ 0x2; //data read only in main
-		j++;
 	}
 }
 
@@ -45,4 +44,37 @@ void USART2_IRQHandler() //only handle Rx - need to be set up in USART2_Init()
 
 	if(txData == 13) //Enter
 		EventFlag |= 0x04;
+}
+
+void EXTI0_IRQHandler(void)
+{
+	static uint8_t lastLedStatus = 1;
+	static uint32_t timeSinceLastIrq = 0;
+
+	uint32_t time = SysTick_GetElapsedTimeSinceStartInMs();
+
+	// Check switch bounce effect - return in this case
+	if(time - timeSinceLastIrq < SWITCH_BOUNCE_THRESHOLD_MS)
+	{
+		timeSinceLastIrq = time;
+		EXTI->PR = 0x01; //clear the interrupt.
+		return;
+	}
+
+
+	if(lastLedStatus)
+	{
+		Led_Enable(LED_DISABLE);
+		Led_TurnOffAll(); //turn off all LEDs
+		lastLedStatus = 0;
+	}
+	else
+	{
+		Led_Enable(LED_ENABLE);
+		lastLedStatus = 1;
+	}
+
+	timeSinceLastIrq = time;
+
+	EXTI->PR = 0x01; //clear the interrupt.
 }

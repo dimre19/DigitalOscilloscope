@@ -20,6 +20,7 @@
 #include "Usart.h"
 #include "Adc.h"
 #include "Dac.h"
+#include "Button.h"
 
 // Sample pragmas to cope with warnings. Please note the related line at
 // the end of this function, used to pop the compiler diagnostics status.
@@ -59,12 +60,13 @@ int main(int argc, char* argv[])
 	TIM6_Init(); //shall be called after Dac_Init()?
 	Adc_Init();
 	Led_Init();
+	Button_Init();
 	USART2_Init();
 
 	EventFlag = 0; //clear events
 
-	HAL_NVIC_SetPriority(ADC_IRQn, 0, 1); //TODO: update priority
-	HAL_NVIC_SetPriority(USART2_IRQn, 0, 0); //TODO: update priority
+	HAL_NVIC_SetPriority(ADC_IRQn, 0, 1); //TODO: update priority //TODO: put in Init + macros for priority (goal: visibility)
+	HAL_NVIC_SetPriority(USART2_IRQn, 0, 0); //TODO: update priority //TODO: put in Init + macros for priority (goal: visibility)
 	HAL_NVIC_EnableIRQ(ADC_IRQn);
 	HAL_NVIC_EnableIRQ(USART2_IRQn);
 

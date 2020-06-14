@@ -28,7 +28,7 @@ void USART2_Init(void)
 
 	USART2->BRR = 4375;//TODO: calculate it from APB2! 42Mhz(APB2)/9600bps = 4375
 
-	USART2->CR1 |= 0X0020;//Interrupt enable for Rx
+	USART2->CR1 |= 0X0020;//Interrupt enable for Rx //TODO: disable/enable irq-s needed?
 
 	USART2->CR1 |= 0x0004; //enable Rx
 

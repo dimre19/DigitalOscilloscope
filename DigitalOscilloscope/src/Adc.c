@@ -57,7 +57,7 @@ void Adc_Init()
 	ADC2->CR2 |= 0x1B000000; //External trigger enable + Start measuring at Timer 5 CC2 event TODO: update to different Timer
 	#endif
 
-	ADC2->CR1 = 0x20; //Enable Interrupt mode
+	ADC2->CR1 = 0x20; //Enable Interrupt mode //TODO: disable/enable irq-s needed?
 	ADC2->CR2 |= 1;
 
 }
