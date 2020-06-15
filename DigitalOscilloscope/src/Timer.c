@@ -20,7 +20,7 @@ void TIM2_Init()
 	// Set up PWM. PWM is used to have one rising edge in each cycle (trigger)
 	// Other option is simple CC and set ADC to be sensitive both falling and rising edges. Many options. :)
 	TIM2->PSC  =  8400-1; //prescale to 10kHz
-	TIM2->ARR  =  10000-1; //1kHz signal
+	TIM2->ARR  =  10000-1; //1Hz signal
 	TIM2->CNT = 0;
 	TIM2->CCMR1 = 0x6800; //PWM mode
 	TIM2->CCER = 0x0010; //enable output compare 2 preload
@@ -41,12 +41,24 @@ void TIM5_Init()
 	// Set up PWM. PWM is used to have one rising edge in each cycle (trigger)
 	// Other option is simple CC and set ADC to be sensitive both falling and rising edges. Many options. :)
 	TIM5->PSC  =  0x0000;
-	TIM5->ARR  =  SystemCoreClock / ( 440 * 32 ); //syncronize with DAC frequency
+	TIM5->ARR  =  SystemCoreClock / ( 440 * 32 ); //synchronize with DAC frequency //TODO: bugfix: this is 220Hz signal, check it
 	TIM5->CNT = 0;
 	TIM5->CCMR1 = 0x6800; //PWM mode
 	TIM5->CCER = 0x0010; //enable output compare 2 preload
 	TIM5->CCR2 = 50-1; //pulse-width in ticks. It shall be smaller then ARR register value.
 	TIM5->CR1 |= 1; //start the timer.
+}
+
+void TIM5_UpdateFreq(uint32_t freqHz)
+{
+	TIM5->ARR = SystemCoreClock / (freqHz *32); //TODO: parameterize samples
+	TIM5->EGR |= 1; //update registers
+}
+
+void TIM6_UpdateFreq(uint32_t freqHz)
+{
+	TIM6->ARR = SystemCoreClock / (freqHz *32); //TODO: parameterize samples
+	TIM6->EGR |= 1; //update registers
 }
 
 /**

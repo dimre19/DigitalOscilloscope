@@ -13,5 +13,7 @@
 void TIM2_Init();
 void TIM5_Init();
 void TIM6_Init();
+void TIM5_UpdateFreq(uint32_t freqHz);
+void TIM6_UpdateFreq(uint32_t freqHz);
 
 #endif /* TIMER_H_ */

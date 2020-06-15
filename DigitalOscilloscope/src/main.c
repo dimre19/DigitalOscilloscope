@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h> //for pow function
 #include "diag/Trace.h"
 #include "Global.h"
 #include "Led.h"
@@ -44,6 +45,8 @@ int main(int argc, char* argv[])
 	uint32_t adcInputIndex = 0;
 	uint8_t usartTxIndex = 0;
 	uint8_t rxBuffer[32];
+	uint32_t freq;
+	UsartCommmand command;
 
 	for(int i = 0; i<32; i++)
 	{
@@ -91,13 +94,20 @@ int main(int argc, char* argv[])
 	  if(EventFlag & 0x04) //USART2 Rx
 	  {
 		  USART2_ReadRxBuffer(rxBuffer);
+		  freq = 0;
 		  while(rxBuffer[usartTxIndex] != 13 && usartTxIndex != 32) //Carriage return
 		  {
-			  USART2_Send(rxBuffer[usartTxIndex++]);
+			  usartTxIndex++;
 		  }
-		  USART2_Send(10);//new line
-		  USART2_Send(13);//carriage return
+		  for(int i = usartTxIndex; i>0; i--) //TODO: filter for numbers
+		  {
+			  freq += (rxBuffer[i-1] - 48) * pow(10,(usartTxIndex - i));
+		  }
 		  usartTxIndex = 0;
+
+		  TIM5_UpdateFreq(freq);
+
+		  Led_Toggle(GREEN_LED);
 		  EventFlag &=~ 0x04;
 	  }
 

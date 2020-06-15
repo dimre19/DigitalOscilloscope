@@ -9,6 +9,7 @@
 
 
 uint8_t rxBuffer[32]; //maximum length is 32;
+
 /**
   * @brief Initalizes the USART module
   * @note  Asynchronous mode
