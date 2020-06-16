@@ -11,13 +11,6 @@
 #include "stm32f4xx.h"
 
 
-typedef enum UsartCommand
-{
-	SAJT,
-	SZALAMI
-} UsartCommmand;
-
-
 void USART2_Init(void);
 void USART2_Init(void);
 uint32_t USART2_Receive(void);
