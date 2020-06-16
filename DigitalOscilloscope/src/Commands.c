@@ -14,8 +14,8 @@
 const char UserCommands[NUMBER_OF_COMMANDS][MAX_STRING_SIZE] =
 {
 	"FG_SET_WAVEFORM",
-	"FG_UPDATE_FREQ",
-	"FG_UPDATE_AMP",
+	"FG_CHANGE_FREQ",
+	"FG_CHANGE_AMP",
 	"TURN_OFF_LEDS"
 };
 
@@ -23,20 +23,16 @@ UsartCommand GetCommand(uint8_t* rxBuff, uint8_t rxBuffLength)
 {
 	uint8_t index = 0;
 	uint8_t tempBuff[rxBuffLength];
-	UsartCommand sajt;
+	UsartCommand retval;
 	while(rxBuff[index] != 13 && index != 32) //Carriage return
 	{
 	 tempBuff[index] = rxBuff[index];
 	 index++;
 	}
 
-	sajt = FindCommand(tempBuff,index);
-	for(int i = index; i>0; i--) //TODO: filter for numbers
-	{
-	//					  freq += (rxBuff[i-1] - 48) * pow(10,(index - i));
-	}
-	index = 0;
-	return NOT_VALID;
+	retval = FindCommand(tempBuff,index);
+	return retval;
+
 }
 
 UsartCommand FindCommand(uint8_t* buff, uint16_t size)

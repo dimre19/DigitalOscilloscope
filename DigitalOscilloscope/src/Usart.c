@@ -9,6 +9,8 @@
 
 
 uint8_t rxBuffer[32]; //maximum length is 32;
+uint8_t txBuffer[32]; //maximum length is 32;
+uint8_t txRequestsInByte = 0;
 
 /**
   * @brief Initalizes the USART module
@@ -38,6 +40,7 @@ void USART2_Init(void)
 	GPIOA->AFR[0] |= 0x700; //Alternate function 7 on PA2 is USART2 Tx
 	GPIOA->MODER |= 0x0020;  //Enable alternate function at PA2
 
+	USART2->CR1 |= 0X0040;//Transmission complete interrupt enable for Tx//TODO: disable/enable irq-s needed?
 	USART2->CR1 |= 0x0008; //enable Tx
 
 	// Enable USART2
@@ -89,4 +92,28 @@ void USART2_ReadRxBuffer(uint8_t* rxBuff)
 	{
 		rxBuff[i] = rxBuffer[i];
 	}
+}
+
+void USART2_UpdateTxBuffer(uint8_t* txBuff, uint8_t length)
+{
+	for(int i = 0; i < length; i++)
+	{
+		txBuffer[i] = txBuff[i];
+	}
+	txRequestsInByte = length;
+	USART2_UpdateDataRegister();
+}
+
+void USART2_UpdateDataRegister()
+{
+	static uint8_t txIndex = 0;
+
+	if(txIndex == txRequestsInByte)
+	{
+		txRequestsInByte = 0;
+		txIndex = 0;
+		return;
+	}
+
+	USART2->DR = txBuffer[txIndex++]; //last operation, because it triggers IRQ
 }

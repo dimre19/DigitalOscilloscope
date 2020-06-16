@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h> //for pow function
 #include "diag/Trace.h"
 #include "Global.h"
@@ -46,8 +47,10 @@ int main(int argc, char* argv[])
 	uint32_t adcInputIndex = 0;
 	uint8_t usartTxIndex = 0;
 	uint8_t rxBuffer[32];
+	uint8_t txBuffer[32];
 	uint32_t freq, temp;
 	UsartCommand command;
+	char* message;
 
 	for(int i = 0; i<32; i++)
 	{
@@ -102,6 +105,11 @@ int main(int argc, char* argv[])
 
 		  switch(command){
 		  case NOT_VALID:
+			  break;
+		  case FG_SET_WAVEFORM:
+			  message = "[STM32]: Enter frequency in Hz: ";
+			  strcpy(txBuffer,message);
+			  USART2_UpdateTxBuffer(txBuffer,sizeof(txBuffer)/sizeof(uint8_t));
 			  break;
 		  case FG_UPDATE_FREQ:
 			  TIM6_UpdateFreq(freq); //modify TIM6 frequency for DAC output control

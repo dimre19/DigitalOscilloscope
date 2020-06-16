@@ -34,7 +34,7 @@ void ADC_IRQHandler() //TODO: worth to switch to non irq mode in case of high sa
 
 void USART2_IRQHandler() //only handle Rx - need to be set up in USART2_Init()
 {
-	uint8_t txData;
+	uint8_t txData = 0;
 
 	if(USART2->SR & 0x0020)
 	{
@@ -44,6 +44,13 @@ void USART2_IRQHandler() //only handle Rx - need to be set up in USART2_Init()
 
 	if(txData == 13) //Enter
 		EventFlag |= 0x04;
+
+	//Tx events
+	if(USART2->SR & 0x0040) //check TC flag (last transmission done) - note: first shall be start out from IRQHandler
+	{
+		USART2->SR &=~ 0x0040; //clear IT flag - necessary if no next DR register write will happen (end of txBuff transmission)
+		USART2_UpdateDataRegister(); //send next byte - function will handle if no more byte left.
+	}
 }
 
 void EXTI0_IRQHandler(void)
