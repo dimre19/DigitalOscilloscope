@@ -21,4 +21,6 @@ typedef enum UsartCommand
 
 UsartCommand GetCommand(uint8_t* rxBuff, uint8_t rxBuffLength);
 UsartCommand FindCommand(uint8_t* buff, uint16_t size);
+void CommandHandler();
+uint32_t GetFrequency();
 #endif /* COMMANDS_H_ */

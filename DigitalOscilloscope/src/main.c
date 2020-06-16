@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h> //for pow function
 #include "diag/Trace.h"
 #include "Global.h"
 #include "Led.h"
@@ -45,12 +44,6 @@ int main(int argc, char* argv[])
 	uint16_t adcInputMeas[32*5];
 	uint32_t tempSensorIndex= 0;
 	uint32_t adcInputIndex = 0;
-	uint8_t usartTxIndex = 0;
-	uint8_t rxBuffer[32];
-	uint8_t txBuffer[32];
-	uint32_t freq, temp;
-	UsartCommand command;
-	char* message;
 
 	for(int i = 0; i<32; i++)
 	{
@@ -97,28 +90,8 @@ int main(int argc, char* argv[])
 	  }
 	  if(EventFlag & 0x04) //USART2 Rx
 	  {
-		  temp = sizeof(rxBuffer);
-		  USART2_ReadRxBuffer(rxBuffer);
-		  freq = 0;
 
-		  command = GetCommand(rxBuffer,sizeof(rxBuffer)/sizeof(uint8_t));
-
-		  switch(command){
-		  case NOT_VALID:
-			  break;
-		  case FG_SET_WAVEFORM:
-			  message = "[STM32]: Enter frequency in Hz: ";
-			  strcpy(txBuffer,message);
-			  USART2_UpdateTxBuffer(txBuffer,sizeof(txBuffer)/sizeof(uint8_t));
-			  break;
-		  case FG_UPDATE_FREQ:
-			  TIM6_UpdateFreq(freq); //modify TIM6 frequency for DAC output control
-			  break;
-
-		  default:
-			  //printf report
-			  break;
-		  }
+		  CommandHandler();
 
 		  Led_Toggle(GREEN_LED);
 		  EventFlag &=~ 0x04;
